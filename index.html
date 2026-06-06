@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mia 🤍</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080609;
+    --text: #f0f2f5;
+    --muted: #9a8f9f;
+    --faint: #3a3640;
+    --accent: #00a6fb;
+    --accent-glow: rgba(0, 166, 251, 0.15);
+    --accent-hover: #33b9fc;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Ambient glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -40%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Noise overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Particle canvas */
+  #bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* Card */
+  .card {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 3.5rem 2.5rem;
+    max-width: 400px;
+    width: 90%;
+  }
+
+  /* Liquid glass panel */
+  .glass {
+    background: rgba(255, 255, 255, 0.015);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    position: relative;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.06);
+    animation: fadeUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+  .glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.25) 0%,
+      rgba(255,255,255,0.08) 20%,
+      rgba(255,255,255,0) 40%,
+      rgba(255,255,255,0) 60%,
+      rgba(255,255,255,0.06) 85%,
+      rgba(255,255,255,0.18) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Avatar ring */
+  .avatar-wrap {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 1.5rem;
+  }
+  .avatar-ring {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), rgba(255,255,255,0.04));
+    padding: 1.5px;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  .avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2a2a2a, #111);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    position: relative;
+  }
+
+  /* Typography */
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.25rem;
+    color: var(--text);
+  }
+  .sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    margin-bottom: 2.25rem;
+  }
+
+  /* Links */
+  .links { display: flex; flex-direction: column; gap: 0.65rem; }
+  .link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem;
+    border-radius: 14px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    transition: all 0.25s ease;
+    position: relative;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .link:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(0, 166, 251, 0.2);
+    transform: translateY(-1px);
+  }
+  .link:active { transform: scale(0.985); }
+  .link.primary {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 500;
+    border: none;
+    box-shadow: 0 4px 24px var(--accent-glow);
+  }
+  .link.primary:hover {
+    background: #33b9fc;
+    box-shadow: 0 6px 32px rgba(0, 166, 251, 0.25);
+  }
+  .link-icon { font-size: 1.05rem; opacity: 0.7; }
+  .link.primary .link-icon { opacity: 0.9; }
+
+  /* Footer */
+  .footer {
+    margin-top: 2.5rem;
+    font-size: 0.7rem;
+    color: var(--faint);
+    letter-spacing: 0.03em;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .card { padding: 2rem 1rem; }
+    .glass { padding: 2.5rem 1.5rem; }
+    h1 { font-size: 1.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="card">
+  <div class="glass">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <div class="avatar">🤍</div>
+    </div>
+    <h1>Mia</h1>
+    <p class="sub">exclusive content &nbsp;·&nbsp; daily posts &nbsp;·&nbsp; just for you</p>
+
+    <div class="links">
+      <a href="https://onlyfans.com/mia_bluebird" class="link primary" target="_blank">
+        <span class="link-icon">🔒</span> OnlyFans
+      </a>
+      <a href="https://x.com/0xMiaBluebird" class="link" target="_blank">
+        <span class="link-icon">✧</span> Twitter
+      </a>
+      <a href="#" class="link" id="ig-link">
+        <span class="link-icon">📸</span> Instagram
+      </a>
+    </div>
+  </div>
+  <p class="footer">18+ only &nbsp;·&nbsp; by continuing you confirm you are 18 or older</p>
+</div>
+
+<script>
+// Particle background
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let w, h;
+
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * w;
+    this.y = Math.random() * h;
+    this.size = Math.random() * 1.2 + 0.3;
+    this.speedX = (Math.random() - 0.5) * 0.3;
+    this.speedY = (Math.random() - 0.5) * 0.3;
+    this.opacity = Math.random() * 0.4 + 0.1;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 40; i++) particles.push(new Particle());
+
+function animate() {
+  ctx.clearRect(0, 0, w, h);
+  particles.forEach(p => { p.update(); p.draw(); });
+  // Draw subtle connections
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 120) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,166,251,${0.04 * (1 - dist / 120)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+
+// IG link — update when ready
+document.getElementById('ig-link').href = 'https://instagram.com/0xmiabluebird';
+</script>
+
+</body>
+</html>
