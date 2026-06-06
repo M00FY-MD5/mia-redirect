@@ -226,13 +226,13 @@
     <p class="sub">exclusive content &nbsp;·&nbsp; daily posts &nbsp;·&nbsp; just for you</p>
 
     <div class="links">
-      <a href="https://onlyfans.com/mia_bluebird" class="link primary" target="_blank">
+      <a href="/of" class="link primary" target="_blank" onclick="trackClick('onlyfans')">
         <span class="link-icon">🔒</span> OnlyFans
       </a>
-      <a href="https://x.com/0xMiaBluebird" class="link" target="_blank">
+      <a href="/x" class="link" target="_blank" onclick="trackClick('twitter')">
         <span class="link-icon">✧</span> Twitter
       </a>
-      <a href="#" class="link" id="ig-link">
+      <a href="/ig" class="link" target="_blank" onclick="trackClick('instagram')">
         <span class="link-icon">📸</span> Instagram
       </a>
     </div>
@@ -304,8 +304,50 @@ function animate() {
 }
 animate();
 
-// IG link — update when ready
-document.getElementById('ig-link').href = 'https://instagram.com/0xmiabluebird';
+// Analytics: pageview + click tracking
+(function() {
+  function sendEvent(type, link) {
+    var data = JSON.stringify({
+      type: type,
+      link: link || '',
+      page: window.location.href,
+      referrer: document.referrer || 'direct',
+      screen: window.innerWidth + 'x' + window.innerHeight,
+    });
+    
+    // Try to send to analytics server (silent fail if not running)
+    try {
+      fetch('http://localhost:8765', {
+        method: 'POST',
+        body: data,
+        mode: 'no-cors',
+      }).catch(function(){});
+    } catch(e) {}
+    
+    // Local backup
+    var key = 'mia_events';
+    var events = JSON.parse(localStorage.getItem(key) || '[]');
+    events.push({
+      type: type,
+      link: link || '',
+      time: new Date().toISOString(),
+    });
+    // Keep last 100 events
+    if (events.length > 100) events = events.slice(-100);
+    localStorage.setItem(key, JSON.stringify(events));
+  }
+  
+  // Pageview
+  sendEvent('pageview', '');
+  
+  // Expose click tracker for onclick handlers
+  window.trackClick = function(link) {
+    sendEvent('click', link);
+    return true;
+  };
+})();
+
+// IG link already set inline
 </script>
 
 </body>
